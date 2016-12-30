@@ -1,0 +1,221 @@
+* {
+  padding: 0;
+  margin: 0; }
+
+html, body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: none; }
+
+body {
+  background-color: #666666;
+  margin: 0; }
+
+/* animations */
+@keyframes shard1 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(10% 35%, 25% 25%, 25% 35%);
+    /* 1 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(60% 30%, 75% 40%, 65% 25%);
+    /* 2 */ } }
+
+@keyframes shard2 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(25% 25%, 25% 35%, 35% 25%);
+    /* 4 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(75% 40%, 85% 40%, 75% 45%);
+    /* 6 */ } }
+
+@keyframes shard3 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(35% 50%, 25% 55%, 25% 45%);
+    /* 8 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(65% 25%, 80% 25%, 75% 40%);
+    /* 3 */ } }
+
+@keyframes shard4 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(25% 65%, 35% 65%, 25% 75%);
+    /* 13 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(80% 25%, 75% 40%, 85% 30%);
+    /* 4 */ } }
+
+@keyframes shard5 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(25% 35%, 35% 25%, 35% 35%);
+    /* 5 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(60% 60%, 75% 60%, 85% 50%);
+    /* 9 */ } }
+
+@keyframes shard6 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(25% 75%, 35% 65%, 35% 75%);
+    /* 14 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(75% 45%, 85% 40%, 85% 50%);
+    /* 7 */ } }
+
+@keyframes shard7 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(25% 35%, 35% 50%, 35% 35%);
+    /* 6 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(65% 75%, 60% 70%, 75% 60%);
+    /* 11 */ } }
+
+@keyframes shard8 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(25% 35%, 25% 45%, 35% 50%);
+    /* 7 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(60% 30%, 75% 40%, 60% 40%);
+    /* 1 */ } }
+
+@keyframes shard9 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(10% 35%, 25% 35%, 10% 40%);
+    /* 2 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(75% 60%, 80% 75%, 85% 70%);
+    /* 13 */ } }
+
+@keyframes shard10 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(10% 40%, 25% 35%, 25% 40%);
+    /* 3 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(80% 75%, 75% 60%, 65% 75%);
+    /* 12 */ } }
+
+@keyframes shard11 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(25% 60%, 35% 65%, 25% 65%);
+    /* 12 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(75% 40%, 85% 30%, 85% 40%);
+    /* 5 */ } }
+
+@keyframes shard12 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(25% 55%, 35% 50%, 25% 60%);
+    /* 9 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(75% 60%, 85% 60%, 85% 70%);
+    /* 14 */ } }
+
+@keyframes shard13 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(25% 60%, 35% 50%, 35% 60%);
+    /* 10 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(60% 60%, 75% 45%, 85% 50%);
+    /* 8 */ } }
+
+@keyframes shard14 {
+  from {
+    background-color: red;
+    -webkit-clip-path: polygon(25% 60%, 35% 60%, 35% 65%);
+    /* 11 */ }
+  to {
+    background-color: yellow;
+    -webkit-clip-path: polygon(60% 60%, 60% 70%, 75% 60%);
+    /* 10 */ } }
+
+#shards {
+  position: relative;
+  height: 100%;
+  width: 100%; }
+  #shards .shard {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; }
+  #shards .shard-1 {
+    animation-duration: 3s;
+    animation-name: shard1;
+    animation-fill-mode: forwards; }
+  #shards .shard-2 {
+    animation-duration: 3s;
+    animation-name: shard2;
+    animation-fill-mode: forwards; }
+  #shards .shard-3 {
+    animation-duration: 3s;
+    animation-name: shard3;
+    animation-fill-mode: forwards; }
+  #shards .shard-4 {
+    animation-duration: 3s;
+    animation-name: shard4;
+    animation-fill-mode: forwards; }
+  #shards .shard-5 {
+    animation-duration: 3s;
+    animation-name: shard5;
+    animation-fill-mode: forwards; }
+  #shards .shard-6 {
+    animation-duration: 3s;
+    animation-name: shard6;
+    animation-fill-mode: forwards; }
+  #shards .shard-7 {
+    animation-duration: 3s;
+    animation-name: shard7;
+    animation-fill-mode: forwards; }
+  #shards .shard-8 {
+    animation-duration: 3s;
+    animation-name: shard8;
+    animation-fill-mode: forwards; }
+  #shards .shard-9 {
+    animation-duration: 3s;
+    animation-name: shard9;
+    animation-fill-mode: forwards; }
+  #shards .shard-10 {
+    animation-duration: 3s;
+    animation-name: shard10;
+    animation-fill-mode: forwards; }
+  #shards .shard-11 {
+    animation-duration: 3s;
+    animation-name: shard11;
+    animation-fill-mode: forwards; }
+  #shards .shard-12 {
+    animation-duration: 3s;
+    animation-name: shard12;
+    animation-fill-mode: forwards; }
+  #shards .shard-3 {
+    animation-duration: 3s;
+    animation-name: shard13;
+    animation-fill-mode: forwards; }
+  #shards .shard-14 {
+    animation-duration: 3s;
+    animation-name: shard14;
+    animation-fill-mode: forwards; }
