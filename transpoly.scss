@@ -11,9 +11,35 @@ html, body{
 body{
     background-color:#666666;
     margin:0;
+    text-align:center;
+}
+
+div#btn {
+    cursor:pointer;
+    display:inline-block;
+    padding:0.5em;
+    background-color:#FFFBF0; /* good ol' tooltip */
+    border:1px solid #888888;
+    margin: 10 auto 0 auto;
+    border-radius:5px;
 }
 
 /* animations */
+
+$animationfillmode: forwards;
+$animationdirection: normal;
+
+@mixin animation($shard) {
+    animation-duration: 3s;
+    -webkit-animation-duration: 3s;
+    animation-fill-mode: $animationfillmode;
+    -webkit-animation-fill-mode: $animationfillmode;
+    animation-direction: $animationdirection;
+    -webkit-animation-direction: $animationdirection;
+    animation-name: $shard;
+    -webkit-animation-name: $shard;
+}
+
 @keyframes shard1 {
     from {
         background-color: red;
@@ -170,74 +196,102 @@ body{
     }
 
     .shard-1 {
-        animation-duration: 3s;
-        animation-name: shard1;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 10% 35%, 25% 25%, 25% 35% ); /* 1 */
+    }
+    .shard-1.animated {
+        @include animation(shard1);
     }
     .shard-2 {
-        animation-duration: 3s;
-        animation-name: shard2;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 25% 25%, 25% 35%, 35% 25% ); /* 4 */
+    }
+    .shard-2.animated {
+        @include animation(shard2);
     }
     .shard-3 {
-        animation-duration: 3s;
-        animation-name: shard3;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 35% 50%, 25% 55%, 25% 45% ); /* 8 */
+    }
+    .shard-3.animated {
+        @include animation(shard3);
     }
     .shard-4 {
-        animation-duration: 3s;
-        animation-name: shard4;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 25% 65%, 35% 65%, 25% 75% ); /* 13 */
+    }
+    .shard-4.animated {
+        @include animation(shard4);
     }
     .shard-5 {
-        animation-duration: 3s;
-        animation-name: shard5;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 25% 35%, 35% 25%, 35% 35% ); /* 5 */
+    }
+    .shard-5.animated {
+        @include animation(shard5);
     }
     .shard-6 {
-        animation-duration: 3s;
-        animation-name: shard6;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 25% 75%, 35% 65%, 35% 75% ); /* 14 */
+    }
+    .shard-6.animated {
+        @include animation(shard6);
     }
     .shard-7 {
-        animation-duration: 3s;
-        animation-name: shard7;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 25% 35%, 35% 50%, 35% 35% ); /* 6 */
+    }
+    .shard-7.animated {
+        @include animation(shard7);
     }
     .shard-8 {
-        animation-duration: 3s;
-        animation-name: shard8;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 25% 35%, 25% 45%, 35% 50% ); /* 7 */
+    }
+    .shard-8.animated {
+        @include animation(shard8);
     }
     .shard-9 {
-        animation-duration: 3s;
-        animation-name: shard9;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 10% 35%, 25% 35%, 10% 40% ); /* 2 */
+    }
+    .shard-9.animated {
+        @include animation(shard9);
     }
     .shard-10 {
-        animation-duration: 3s;
-        animation-name: shard10;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon(10% 40%, 25% 35%, 25% 40% ); /* 3 */
+    }
+    .shard-10.animated {
+        @include animation(shard10);
     }
     .shard-11 {
-        animation-duration: 3s;
-        animation-name: shard11;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 25% 60%, 35% 65%, 25% 65% ); /* 12 */
+    }
+    .shard-11.animated {
+        @include animation(shard11);
     }
     .shard-12 {
-        animation-duration: 3s;
-        animation-name: shard12;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 25% 55%, 35% 50%, 25% 60% ); /* 9 */
     }
-    .shard-3 {
-        animation-duration: 3s;
-        animation-name: shard13;
-        animation-fill-mode: forwards;
+    .shard-12.animated {
+        @include animation(shard12);
+    }
+    .shard-13 {
+        background-color: red;
+        -webkit-clip-path: polygon( 25% 60%, 35% 50%, 35% 60% ); /* 10 */
+    }
+    .shard-13.animated {
+        @include animation(shard13);
     }
     .shard-14 {
-        animation-duration: 3s;
-        animation-name: shard14;
-        animation-fill-mode: forwards;
+        background-color: red;
+        -webkit-clip-path: polygon( 25% 60%, 35% 60%, 35% 65% ); /* 11 */
+    }
+    .shard-14.animated {
+        @include animation(shard14);
     }
 
 }
