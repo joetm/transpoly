@@ -6,8 +6,7 @@
 </head>
 <body>
 
-    <div id="shards">
-    </div>
+    <div id="shards"></div>
 
 	<img id="image" style="display:none" src="./data/clockwork.png" alt="">
 
@@ -23,6 +22,7 @@
     if (!window.fetch) {
     	alert('Please use a browser that supports ajax fetch()');
     }
+
     fetch('./data/clockwork.obj')
     	.then(function (response) {
     		// console.log(response);

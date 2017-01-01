@@ -10,8 +10,7 @@ html, body {
 body {
   background-color: #666666;
   margin: 0;
-  text-align: center;
-  overflow: auto; }
+  text-align: center; }
 
 div.btn, ul li a.btn {
   cursor: pointer;
