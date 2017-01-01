@@ -13,7 +13,7 @@ body {
   margin: 0;
   text-align: center; }
 
-div#btn {
+div.btn, ul li a.btn {
   cursor: pointer;
   display: inline-block;
   padding: 0.5em;

@@ -2,49 +2,17 @@
 <html>
 <head>
     <title>TRANS-POLY</title>
-    <link rel="stylesheet" href="./transpoly.css" type="text/css" />
 </head>
 <body>
 
-	<div id="btn">Animate</div>
-
-    <div id="shards">
-        <div class="shard shard-1"></div>
-        <div class="shard shard-2"></div>
-
-        <div class="shard shard-3"></div>
-
-        <div class="shard shard-4"></div>
-        <div class="shard shard-5"></div>
-        <div class="shard shard-6"></div>
-        <div class="shard shard-7"></div>
-        <div class="shard shard-8"></div>
-        <div class="shard shard-9"></div>
-        <div class="shard shard-10"></div>
-        <div class="shard shard-11"></div>
-        <div class="shard shard-12"></div>
-        <div class="shard shard-13"></div>
-        <div class="shard shard-14"></div>
-    </div>
-
-    <script type="text/javascript">
-    	var btn = document.getElementById('btn');
-    	btn.onclick = function btnClick () {
-    		// console.log('TRANS POLY');
-    		var shards = document.getElementsByClassName('shard');
-			console.log(shards);
-			for (var i = 0, s = shards.length; i < s; i++) {
-				if (shards[i].className.indexOf('animated') === -1) {
-					shards[i].className += ' animated';
-					btn.innerText = 'Reset';
-				} else {
-					shards[i].className = shards[i].className.replace(' animated', '');
-					btn.innerText = 'Animate';
-				}
-				// console.log(shards[i].className);
-			};
-    	};
-    </script>
+    <ul>
+    <li>
+    	<a class="btn" href="./index-1.html">version 1</a>
+    </li>
+    <li>
+        <a class="btn" href="./index-2.html">version 2</a>
+    </li>
+    </ul>
 
 </body>
 </html>

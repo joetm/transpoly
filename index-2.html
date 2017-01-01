@@ -1,0 +1,118 @@
+<!DOCTYPE>
+<html>
+<head>
+    <title>TRANS-POLY 2</title>
+    <link rel="stylesheet" href="./transpoly-2.css" type="text/css" />
+</head>
+<body>
+
+    <div id="shards">
+    </div>
+
+    <script type="text/javascript">
+    if (!window.fetch) {
+    	alert('Please use a browser that supports ajax fetch()');
+    }
+    fetch('./data/clockwork.obj')
+    	.then(function (response) {
+    		// console.log(response);
+    		return response.text();
+    	})
+    	.then(function (txt) {
+    		console.log(txt);
+			/*
+	    		v 14.683 963.902 0
+				v 0 1080 0
+				v 15.54 1030.08 0
+				v 1920 1080 0
+				// ...
+				f 33172 33173 33174
+				f 33184 33185 33186
+				f 33187 33188 33189
+			*/
+    		// parse the text
+    		var vertices = [ null ]; // obj files start counting at one -> fill first field
+    		var polygons = [];
+    		var lines = txt.match(/[^\r\n]+/g);
+    		var numLines = lines.length;
+			console.log('Processing ', numLines, 'lines');
+			var matches;
+			var resume = 0;
+			for (var i = 0; i < numLines; i++) {
+				// lines[i]
+				// vertice?
+				if (lines[i][0] === 'v') {
+					// console.log(lines[i].match(verticeRegex));
+					matches = lines[i].match(/v\s([\d\.]+)\s([\d\.]+)/);
+					vertices.push( [ parseFloat(matches[1]), parseFloat(matches[2]) ] );
+				}
+				// polygon?
+				if (lines[i][0] === 'f') {
+					resume = i;
+					break;
+				}
+			}
+			for (var i = resume; i < numLines; i++) {
+				if (lines[i][0] === 'f') {
+					matches = lines[i].match(/f\s([\d\.]+)\s([\d\.]+)\s([\d\.]+)/);
+					polygons.push(
+						[
+							vertices[ parseInt(matches[1], 10) ],
+							vertices[ parseInt(matches[2], 10) ],
+							vertices[ parseInt(matches[3], 10) ]
+						]
+					);
+				}
+			}
+
+			vertices = null;
+			var numPolygons = polygons.length;
+			console.log('Rendering', numPolygons, 'polygons');
+
+			// draw polygons
+			// dev
+			var BreakException = {};
+			var webkitClipPath;
+			var shardDiv = document.getElementById('shards');
+			var shard;
+			try {
+				for (var i = 0; i < numPolygons; i++) {
+					// console.log(polygons[i]);
+					console.log('shard', i);
+					console.log(
+						polygons[i][0][0],
+						polygons[i][0][1],
+						polygons[i][1][0],
+						polygons[i][1][1],
+						polygons[i][2][0],
+						polygons[i][2][1]
+					);
+
+					webkitClipPath = 'polygon( ' + polygons[i][0][0] + 'px ' + polygons[i][0][1] + 'px, ' + polygons[i][1][0] + 'px ' + polygons[i][1][1] + 'px, ' + polygons[i][2][0] + 'px ' + polygons[i][2][1] + 'px )';
+
+					console.log(
+						'webkitClipPath', webkitClipPath
+					);
+
+					shard = document.createElement('div');
+					shard.className = "shard shard_" + i;
+					shard.style.backgroundColor = '#FF0000';
+					shard.style.webkitClipPath = webkitClipPath;
+					shardDiv.appendChild(shard);
+
+					// // break for dev
+					// if (i == 9) {
+					// 	throw BreakException;
+					// }
+				}
+			} catch (e) {
+				if (e !== BreakException) {
+					throw e;
+				}
+			}
+
+    	});
+    </script>
+
+</body>
+</html>
