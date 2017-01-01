@@ -1,0 +1,71 @@
+* {
+    padding:0;
+    margin:0;
+}
+html, body{
+    position:relative;
+    width:100%;
+    height:100%;
+}
+body{
+    background-color:#666666;
+    margin:0;
+    text-align:center;
+}
+
+div.btn, ul li a.btn {
+    cursor:pointer;
+    display:inline-block;
+    padding:0.5em;
+    background-color:#FFFBF0; /* good ol' tooltip */
+    border:1px solid #888888;
+    margin: 10 auto 0 auto;
+    border-radius:5px;
+}
+
+/* animations */
+
+$animationfillmode: forwards;
+$animationdirection: normal;
+
+@mixin animation($shard) {
+    animation-duration: 3s;
+    -webkit-animation-duration: 3s;
+    animation-fill-mode: $animationfillmode;
+    -webkit-animation-fill-mode: $animationfillmode;
+    animation-direction: $animationdirection;
+    -webkit-animation-direction: $animationdirection;
+    animation-name: $shard;
+    -webkit-animation-name: $shard;
+}
+
+/*
+@keyframes shard1 {
+    from {
+        background-color: red;
+        -webkit-clip-path: polygon( 10% 35%, 25% 25%, 25% 35% );
+    }
+    to {
+        background-color: yellow;
+        -webkit-clip-path: polygon( 60% 30%, 75% 40%, 65% 25% );
+    }
+}
+*/
+
+
+#shards{
+
+    position:relative;
+    height:100%;
+    width:100%;
+
+    .shard{
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        border:1px solid black;
+    }
+
+}

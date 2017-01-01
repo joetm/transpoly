@@ -1,0 +1,201 @@
+<!DOCTYPE>
+<html>
+<head>
+    <title>TRANS-POLY 2</title>
+    <link rel="stylesheet" href="./transpoly-3.css" type="text/css" />
+</head>
+<body>
+
+    <div id="shards"></div>
+
+	<img id="image" style="display:none" src="./data/clockwork.png" alt="">
+
+
+    <script type="text/javascript">
+
+	// see http://stackoverflow.com/a/5624139/426266
+	function componentToHex(c) {
+		var hex = c.toString(16);
+		return hex.length == 1 ? "0" + hex : hex;
+	}
+
+    if (!window.fetch) {
+    	alert('Please use a browser that supports ajax fetch()');
+    }
+
+	var stylesheet = document.styleSheets[document.styleSheets.length - 1];
+
+
+    fetch('./data/clockwork.obj')
+    	.then(function (response) {
+    		// console.log(response);
+    		return response.text();
+    	})
+    	.then(function (txt) {
+    		// console.log(txt);
+			/*
+	    		v 14.683 963.902 0
+				v 0 1080 0
+				v 15.54 1030.08 0
+				v 1920 1080 0
+				// ...
+				f 33172 33173 33174
+				f 33184 33185 33186
+				f 33187 33188 33189
+			*/
+    		// parse the text
+    		var vertices = [ null ]; // obj files start counting at one -> fill first field
+    		var polygons = [];
+    		var lines = txt.match(/[^\r\n]+/g);
+    		var numLines = lines.length;
+			console.log('Processing ', numLines, 'lines');
+			var matches;
+			var resume = 0;
+			for (var i = 0; i < numLines; i++) {
+				// lines[i]
+				// vertice?
+				if (lines[i][0] === 'v') {
+					// console.log(lines[i].match(verticeRegex));
+					matches = lines[i].match(/v\s([\d\.]+)\s([\d\.]+)/);
+					vertices.push( [ parseFloat(matches[1]), parseFloat(matches[2]) ] );
+				}
+				// polygon?
+				if (lines[i][0] === 'f') {
+					resume = i;
+					break;
+				}
+			}
+			for (var i = resume; i < numLines; i++) {
+				if (lines[i][0] === 'f') {
+					matches = lines[i].match(/f\s([\d\.]+)\s([\d\.]+)\s([\d\.]+)/);
+					polygons.push(
+						[
+							vertices[ parseInt(matches[1], 10) ],
+							vertices[ parseInt(matches[2], 10) ],
+							vertices[ parseInt(matches[3], 10) ]
+						]
+					);
+				}
+			}
+
+			vertices = null;
+			var numPolygons = polygons.length;
+			console.log('Rendering', numPolygons, 'polygons');
+
+
+			// get the pixel colors
+			var img = document.getElementById('image');
+			var canvas = document.createElement('canvas');
+			canvas.width = img.width;
+			canvas.height = img.height;
+			canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+			// pixelData = canvas.getContext('2d').getImageData(10, 10, 1, 1).data;
+			// console.log(pixelData);
+
+			// draw polygons
+			// dev
+			var BreakException = {};
+			var webkitClipPath;
+			var webkitClipPathLeft;
+			var webkitClipPathRight;
+			var shardDiv = document.getElementById('shards');
+			var shard;
+			var shardColor;
+			var center;
+			var pixelData;
+			var animationname;
+			try {
+				for (var i = 0; i < numPolygons; i++) {
+					// console.log(polygons[i]);
+					// console.log('shard', i);
+					// console.log(
+					// 	polygons[i][0][0],
+					// 	polygons[i][0][1],
+					// 	polygons[i][1][0],
+					// 	polygons[i][1][1],
+					// 	polygons[i][2][0],
+					// 	polygons[i][2][1]
+					// );
+
+					webkitClipPathLeft = 'polygon( 0px ' + polygons[i][0][1] + 'px, 0px ' + polygons[i][1][1] + 'px, 0px ' + polygons[i][2][1] + 'px )';
+					webkitClipPath = 'polygon( ' + polygons[i][0][0] + 'px ' + polygons[i][0][1] + 'px, ' + polygons[i][1][0] + 'px ' + polygons[i][1][1] + 'px, ' + polygons[i][2][0] + 'px ' + polygons[i][2][1] + 'px )';
+					// console.log(
+					// 	'webkitClipPath', webkitClipPath
+					// );
+
+
+					shard = document.createElement('div');
+					shard.className = "shard shard_" + i;
+
+					center = [
+						((polygons[i][0][0] + polygons[i][1][0] + polygons[i][2][0]) / 3),
+						((polygons[i][0][1] + polygons[i][1][1] + polygons[i][2][1]) / 3)
+					];
+					// console.log('center', center);
+
+					// get the shard color from the center of the triangular polygon in the canvas image
+					shardColor = '#FF0000';
+					pixelData = canvas.getContext('2d').getImageData(parseInt(center[0], 10), parseInt(center[1], 10), 1, 1).data;
+					shardColor = '#' + componentToHex(pixelData[0]) +
+										componentToHex(pixelData[1]) +
+										componentToHex(pixelData[2]);
+					// console.log(pixelData);
+					shard.style.backgroundColor = shardColor;
+
+					shard.style.webkitClipPath = webkitClipPathLeft;
+
+					animationname = 'shard' + i;
+
+					// insert the animation CSS for this shard
+					stylesheet.insertRule('\
+						@keyframes ' + animationname + ' {\
+						  from {\
+							-webkit-clip-path: ' + webkitClipPathLeft + ';\
+						  }\
+						  to {\
+							-webkit-clip-path: ' + webkitClipPath + ';\
+						  }\
+						}\
+					', stylesheet.rules.length);
+					// setup the animation
+					shard.style.animationDuration = '6s';
+					shard.style.webkitAnimationDuration = '6s';
+					shard.style.animationFillMode = 'forwards';
+					shard.style.webkitAnimationFillMode = 'forwards';
+					shard.style.animationDirection = 'normal';
+					shard.style.webkitAnimationDirection = 'normal';
+
+					// insert the shard
+					shardDiv.appendChild(shard);
+
+					// // break for dev
+					// if (i == 9) {
+					// 	throw BreakException;
+					// }
+				}
+			} catch (e) {
+				if (e !== BreakException) {
+					throw e;
+				}
+			}
+
+			console.log('ok.');
+
+			window.setTimeout(function () {
+
+				var shardElements = document.getElementsByClassName('shard');
+				var numShards = shardElements.length;
+				console.log('adding animation style to ', shardElements.length, 'shards');
+				// add and start the respective animation
+				for (var i = 0; i < numShards; i++) {
+					shardElements[i].style.animationName = 'shard' + i;
+					shardElements[i].style.webkitAnimationName = 'shard' + i;
+				}
+
+			}, 2000);
+
+    	});
+    </script>
+
+</body>
+</html>
