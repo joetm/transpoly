@@ -9,7 +9,17 @@
     <div id="shards">
     </div>
 
+	<img id="image" style="display:none" src="./data/clockwork.png" alt="">
+
+
     <script type="text/javascript">
+
+	// see http://stackoverflow.com/a/5624139/426266
+	function componentToHex(c) {
+		var hex = c.toString(16);
+		return hex.length == 1 ? "0" + hex : hex;
+	}
+
     if (!window.fetch) {
     	alert('Please use a browser that supports ajax fetch()');
     }
@@ -19,7 +29,7 @@
     		return response.text();
     	})
     	.then(function (txt) {
-    		console.log(txt);
+    		// console.log(txt);
 			/*
 	    		v 14.683 963.902 0
 				v 0 1080 0
@@ -69,34 +79,61 @@
 			var numPolygons = polygons.length;
 			console.log('Rendering', numPolygons, 'polygons');
 
+
+			// get the pixel colors
+			var img = document.getElementById('image');
+			var canvas = document.createElement('canvas');
+			canvas.width = img.width;
+			canvas.height = img.height;
+			canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+			// pixelData = canvas.getContext('2d').getImageData(10, 10, 1, 1).data;
+			// console.log(pixelData);
+
 			// draw polygons
 			// dev
 			var BreakException = {};
 			var webkitClipPath;
 			var shardDiv = document.getElementById('shards');
 			var shard;
+			var shardColor;
+			var center;
+			var pixelData;
 			try {
 				for (var i = 0; i < numPolygons; i++) {
 					// console.log(polygons[i]);
-					console.log('shard', i);
-					console.log(
-						polygons[i][0][0],
-						polygons[i][0][1],
-						polygons[i][1][0],
-						polygons[i][1][1],
-						polygons[i][2][0],
-						polygons[i][2][1]
-					);
+					// console.log('shard', i);
+					// console.log(
+					// 	polygons[i][0][0],
+					// 	polygons[i][0][1],
+					// 	polygons[i][1][0],
+					// 	polygons[i][1][1],
+					// 	polygons[i][2][0],
+					// 	polygons[i][2][1]
+					// );
 
 					webkitClipPath = 'polygon( ' + polygons[i][0][0] + 'px ' + polygons[i][0][1] + 'px, ' + polygons[i][1][0] + 'px ' + polygons[i][1][1] + 'px, ' + polygons[i][2][0] + 'px ' + polygons[i][2][1] + 'px )';
-
-					console.log(
-						'webkitClipPath', webkitClipPath
-					);
+					// console.log(
+					// 	'webkitClipPath', webkitClipPath
+					// );
 
 					shard = document.createElement('div');
 					shard.className = "shard shard_" + i;
-					shard.style.backgroundColor = '#FF0000';
+
+					center = [
+						((polygons[i][0][0] + polygons[i][1][0] + polygons[i][2][0]) / 3),
+						((polygons[i][0][1] + polygons[i][1][1] + polygons[i][2][1]) / 3)
+					];
+					// console.log('center', center);
+
+					// get the shard color from the center of the triangular polygon in the canvas image
+					shardColor = '#FF0000';
+					pixelData = canvas.getContext('2d').getImageData(parseInt(center[0], 10), parseInt(center[1], 10), 1, 1).data;
+					shardColor = '#' + componentToHex(pixelData[0]) +
+										componentToHex(pixelData[1]) +
+										componentToHex(pixelData[2]);
+					// console.log(pixelData);
+					shard.style.backgroundColor = shardColor;
+
 					shard.style.webkitClipPath = webkitClipPath;
 					shardDiv.appendChild(shard);
 

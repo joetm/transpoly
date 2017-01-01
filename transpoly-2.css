@@ -10,7 +10,8 @@ html, body {
 body {
   background-color: #666666;
   margin: 0;
-  text-align: center; }
+  text-align: center;
+  overflow: auto; }
 
 div.btn, ul li a.btn {
   cursor: pointer;
@@ -38,8 +39,7 @@ div.btn, ul li a.btn {
 #shards {
   position: relative;
   height: 100%;
-  width: 100%;
-  overflow: auto; }
+  width: 100%; }
   #shards .shard {
     position: absolute;
     top: 0;
