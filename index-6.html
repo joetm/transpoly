@@ -1,0 +1,358 @@
+<!DOCTYPE>
+<html>
+<head>
+    <title>TRANS-POLY 2</title>
+    <link rel="stylesheet" href="./transpoly-3.css" type="text/css" />
+</head>
+<body>
+
+    <div id="shards"></div>
+
+
+	<img class="image" id="image1" style="display:none" src="./data/clockwork.png" alt="">
+	<img class="image" id="image2" style="display:none" src="./data/joker.png" alt="">
+
+
+    <script src="node_modules/q/q.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+	// see http://stackoverflow.com/a/5624139/426266
+	function componentToHex(c) {
+		var hex = c.toString(16);
+		return hex.length == 1 ? "0" + hex : hex;
+	}
+
+    // see http://stackoverflow.com/a/1527820/426266
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    if (!window.fetch) {
+    	alert('Please use a browser that supports ajax fetch()');
+    }
+
+
+	var stylesheet = document.styleSheets[document.styleSheets.length - 1];
+
+
+
+
+    var promises = [];
+
+
+    promises.push(fetch('./data/clockwork.obj')
+    	.then(function (response) {
+    		// console.log(response);
+    		return response.text();
+    	})
+    	.then(function (txt) {
+    		// parse the text
+    		var vertices = [ null ]; // obj files start counting at one -> fill first field
+    		var polygons = [];
+    		var lines = txt.match(/[^\r\n]+/g);
+    		var numLines = lines.length;
+			console.log('Processing ', numLines, 'lines');
+			var matches;
+			var resume = 0;
+			for (var i = 0; i < numLines; i++) {
+				// lines[i]
+				// vertice?
+				if (lines[i][0] === 'v') {
+					// console.log(lines[i].match(verticeRegex));
+					matches = lines[i].match(/v\s([\d\.]+)\s([\d\.]+)/);
+					vertices.push( [ parseFloat(matches[1]), parseFloat(matches[2]) ] );
+				}
+				// polygon?
+				if (lines[i][0] === 'f') {
+					resume = i;
+					break;
+				}
+			}
+			for (var i = resume; i < numLines; i++) {
+				if (lines[i][0] === 'f') {
+					matches = lines[i].match(/f\s([\d\.]+)\s([\d\.]+)\s([\d\.]+)/);
+					polygons.push(
+						[
+							vertices[ parseInt(matches[1], 10) ],
+							vertices[ parseInt(matches[2], 10) ],
+							vertices[ parseInt(matches[3], 10) ]
+						]
+					);
+				}
+			}
+			var numPolygons = polygons.length;
+			console.log('Found', numPolygons, 'polygons in image 1');
+
+			var img = document.getElementById('image1');
+			var canvas = document.createElement('canvas');
+			canvas.width = img.width;
+			canvas.height = img.height;
+			canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+			// pixelData = canvas.getContext('2d').getImageData(10, 10, 1, 1).data;
+			// console.log(pixelData);
+
+            return {
+                polygons: polygons,
+                canvas: canvas
+            };
+    	})
+    );
+
+    promises.push(fetch('./data/joker.obj')
+    	.then(function (response) {
+    		// console.log(response);
+    		return response.text();
+    	})
+    	.then(function (txt) {
+    		// parse the text
+    		var vertices = [ null ]; // obj files start counting at one -> fill first field
+    		var polygons = [];
+    		var lines = txt.match(/[^\r\n]+/g);
+    		var numLines = lines.length;
+			console.log('Processing ', numLines, 'lines');
+			var matches;
+			var resume = 0;
+			for (var i = 0; i < numLines; i++) {
+				// lines[i]
+				// vertice?
+				if (lines[i][0] === 'v') {
+					// console.log(lines[i].match(verticeRegex));
+					matches = lines[i].match(/v\s([\d\.]+)\s([\d\.]+)/);
+					vertices.push( [ parseFloat(matches[1]), parseFloat(matches[2]) ] );
+				}
+				// polygon?
+				if (lines[i][0] === 'f') {
+					resume = i;
+					break;
+				}
+			}
+			for (var i = resume; i < numLines; i++) {
+				if (lines[i][0] === 'f') {
+					matches = lines[i].match(/f\s([\d\.]+)\s([\d\.]+)\s([\d\.]+)/);
+					polygons.push(
+						[
+							vertices[ parseInt(matches[1], 10) ],
+							vertices[ parseInt(matches[2], 10) ],
+							vertices[ parseInt(matches[3], 10) ]
+						]
+					);
+				}
+			}
+			var numPolygons = polygons.length;
+			console.log('Found', numPolygons, 'polygons in image 2');
+
+			var img = document.getElementById('image2');
+			var canvas = document.createElement('canvas');
+			canvas.width = img.width;
+			canvas.height = img.height;
+			canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+			// pixelData = canvas.getContext('2d').getImageData(10, 10, 1, 1).data;
+			// console.log(pixelData);
+
+            return {
+                polygons: polygons,
+                canvas: canvas
+            };
+    	})
+    );
+
+
+    Q.allSettled(promises)
+    .then(function (results) {
+
+        console.log('both images were loaded.');
+        // console.log('results', results);
+
+        // find the smaller set (first) and larger set (second)
+        var smaller = 1;
+        var larger = 0;
+        if (results[0].value.polygons.length > results[1].value.polygons.length) {
+            smaller = 1;
+            larger = 0;
+        }
+
+
+        // draw polygons
+        // dev
+        var BreakException = {};
+        var webkitClipPaths = [];
+        var webkitClipPathEnd;
+        var webkitClipPathStart;
+        var shardDiv = document.getElementById('shards');
+        var shard;
+        var shardColor;
+        var center;
+        var r;
+        var pixelData;
+        var animationname;
+
+        for (var i = 0; i < results[smaller].value.polygons.length; i++) {
+
+            // console.log('processing shard_sm_', i);
+
+            // center of the current polygon
+            center = [
+                (results[smaller].value.polygons[i][0][0] + results[smaller].value.polygons[i][1][0] + results[smaller].value.polygons[i][2][0]) / 3,
+                (results[smaller].value.polygons[i][0][1] + results[smaller].value.polygons[i][1][1] + results[smaller].value.polygons[i][2][1]) / 3
+            ];
+            // console.log('center', center);
+
+            // start position - in image 1
+            webkitClipPathStart = 'polygon( ' + results[smaller].value.polygons[i][0][0] + 'px ' + results[smaller].value.polygons[i][0][1] + 'px, ' + results[smaller].value.polygons[i][1][0] + 'px ' + results[smaller].value.polygons[i][1][1] + 'px, ' + results[smaller].value.polygons[i][2][0] + 'px ' + results[smaller].value.polygons[i][2][1] + 'px )';
+            // end position - in image 2
+            webkitClipPathEnd = 'polygon( ' + results[larger].value.polygons[i][0][0] + 'px ' + results[larger].value.polygons[i][0][1] + 'px, ' + results[larger].value.polygons[i][1][0] + 'px ' + results[larger].value.polygons[i][1][1] + 'px, ' + results[larger].value.polygons[i][2][0] + 'px ' + results[larger].value.polygons[i][2][1] + 'px )';
+
+            // console.log('webkitClipPathStart', webkitClipPathStart);
+            // console.log('webkitClipPathEnd', webkitClipPathEnd);
+
+
+            shard = document.createElement('div');
+            shard.className = "shard shard_sm_" + i;
+
+            // get the shard color for smnaller image
+            pixelData = results[smaller].value.canvas.getContext('2d').getImageData(parseInt(center[0], 10), parseInt(center[1], 10), 1, 1).data;
+            shardColor1 = '#' + componentToHex(pixelData[0]) +
+                                componentToHex(pixelData[1]) +
+                                componentToHex(pixelData[2]);
+            // console.log(pixelData);
+            shard.style.backgroundColor = shardColor;
+
+            // get the shard color for larger image
+            pixelData = results[larger].value.canvas.getContext('2d').getImageData(parseInt(center[0], 10), parseInt(center[1], 10), 1, 1).data;
+            shardColor2 = '#' + componentToHex(pixelData[0]) +
+                                componentToHex(pixelData[1]) +
+                                componentToHex(pixelData[2]);
+            // console.log(pixelData);
+
+            shard.style.webkitClipPath = webkitClipPathStart;
+
+            animationname = 'shard_sm_' + i;
+
+
+            // insert the animation CSS for this shard
+            stylesheet.insertRule('\
+                @keyframes ' + animationname + ' {\
+                    from {\
+                        background-color: ' + shardColor1 + ';\
+                        -webkit-clip-path: ' + webkitClipPathStart + ';\
+                    }\
+                    to {\
+                        background-color: ' + shardColor2 + ';\
+                        -webkit-clip-path: ' + webkitClipPathEnd + ';\
+                    }\
+                }\
+            ', stylesheet.rules.length);
+
+            // setup the animation
+            shard.style.animationDuration = '7s';
+            shard.style.webkitAnimationDuration = '7s';
+            shard.style.animationFillMode = 'forwards';
+            shard.style.webkitAnimationFillMode = 'forwards';
+            shard.style.animationDirection = 'normal';
+            shard.style.webkitAnimationDirection = 'normal';
+
+            // set a random z-index
+            shard.style.zIndex = getRandomInt(0, results[smaller].value.polygons.length);
+
+            // insert the shard
+            shardDiv.appendChild(shard);
+
+        } // for
+
+        console.log('smaller image: ok.');
+
+        // for the rest of the shards, let them appear from their center
+        for (var i = results[smaller].value.polygons.length; i < results[larger].value.polygons.length; i++) {
+
+            // console.log('processing shard_lg_', i);
+
+            // center of the current polygon
+            center = [
+                (results[larger].value.polygons[i][0][0] + results[larger].value.polygons[i][1][0] + results[larger].value.polygons[i][2][0]) / 3,
+                (results[larger].value.polygons[i][0][1] + results[larger].value.polygons[i][1][1] + results[larger].value.polygons[i][2][1]) / 3
+            ];
+            // console.log('center', center);
+
+            // start position - in image 2
+            webkitClipPathStart = 'polygon( ' + center[0] + 'px ' + center[1] + 'px, ' + center[0] + 'px ' + center[1] + 'px, ' + center[0] + 'px ' + center[1] + 'px )';
+            // end position - in image 2
+            webkitClipPathEnd = 'polygon( ' + results[larger].value.polygons[i][0][0] + 'px ' + results[larger].value.polygons[i][0][1] + 'px, ' + results[larger].value.polygons[i][1][0] + 'px ' + results[larger].value.polygons[i][1][1] + 'px, ' + results[larger].value.polygons[i][2][0] + 'px ' + results[larger].value.polygons[i][2][1] + 'px )';
+            // console.log('webkitClipPathStart', webkitClipPathStart);
+            // console.log('webkitClipPathEnd', webkitClipPathEnd);
+
+
+            shard = document.createElement('div');
+            shard.className = "shard shard_lg_" + i;
+
+            // get the shard color for larger image
+            pixelData = results[larger].value.canvas.getContext('2d').getImageData(parseInt(center[0], 10), parseInt(center[1], 10), 1, 1).data;
+            shardColor = '#' + componentToHex(pixelData[0]) +
+                                componentToHex(pixelData[1]) +
+                                componentToHex(pixelData[2]);
+            // console.log(pixelData);
+            shard.style.backgroundColor = shardColor;
+
+            shard.style.webkitClipPath = webkitClipPathStart;
+
+            animationname = 'shard_lg_' + i;
+
+
+            // insert the animation CSS for this shard
+            stylesheet.insertRule('\
+                @keyframes ' + animationname + ' {\
+                    from {\
+                        -webkit-clip-path: ' + webkitClipPathStart + ';\
+                    }\
+                    to {\
+                        -webkit-clip-path: ' + webkitClipPathEnd + ';\
+                    }\
+                }\
+            ', stylesheet.rules.length);
+
+            // setup the animation
+            shard.style.animationDuration = '7s';
+            shard.style.webkitAnimationDuration = '7s';
+            shard.style.animationFillMode = 'forwards';
+            shard.style.webkitAnimationFillMode = 'forwards';
+            shard.style.animationDirection = 'normal';
+            shard.style.webkitAnimationDirection = 'normal';
+
+            // set a random z-index
+            shard.style.zIndex = getRandomInt(0, results[larger].value.polygons.length);
+
+            // insert the shard
+            shardDiv.appendChild(shard);
+
+
+        }
+
+        console.log('larger image: ok.');
+
+
+        // animations
+
+        window.setTimeout(function () {
+            var shardElements = document.getElementsByClassName('shard');
+            var numShards = shardElements.length;
+            var aname;
+            console.log('adding animation to ', shardElements.length, 'shards');
+            // add and start the respective animation
+            for (var i = 0; i < numShards; i++) {
+                if (i <= results[smaller].value.polygons.length) {
+                    aname = 'shard_sm_' + i;
+                } else {
+                    aname = 'shard_lg_' + i;
+                }
+                shardElements[i].style.animationName = aname;
+                shardElements[i].style.webkitAnimationName = aname;
+            }
+        }, 2000);
+
+
+    });
+
+    </script>
+
+</body>
+</html>
